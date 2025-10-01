@@ -212,6 +212,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Uncomment the line below to enable typing effect
         // typeWriter(heroTitle, originalText, 80);
     }
+    
+    // CV iframe error handling
+    const cvIframe = document.querySelector('.cv-iframe');
+    if (cvIframe) {
+        cvIframe.addEventListener('error', function() {
+            console.warn('CV PDF could not be loaded. Please ensure the PDF file exists in the assets folder.');
+            this.style.display = 'none';
+            const errorMessage = document.createElement('div');
+            errorMessage.innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: #64748b;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem; color: #f59e0b;"></i>
+                    <p>CV preview not available. Please <a href="assets/Faisal-Alghamdi-CV.pdf" download style="color: #2563eb;">download the PDF</a> instead.</p>
+                </div>
+            `;
+            this.parentNode.appendChild(errorMessage);
+        });
+    }
 });
 
 // Scroll to top functionality
@@ -325,12 +342,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Console message for developers
 console.log(`
-🚀 Portfolio Website Loaded Successfully!
-📧 Contact: your.email@example.com
-💼 LinkedIn: https://linkedin.com/in/yourprofile
-🐙 GitHub: https://github.com/yourusername
+🚀 Faisal Alghamdi's Portfolio Website Loaded Successfully!
+📧 Contact: Falghamdi0218@gmail.com
+💼 LinkedIn: https://linkedin.com/in/faisal-alghamdi-029199209
+📍 Location: Riyadh, Saudi Arabia
+🎓 Student at Prince Sultan University
 
-Feel free to customize this portfolio to match your personal brand!
+🤖 AI & Data Science Enthusiast | Software Engineer Student
 `);
 
 // Performance monitoring
@@ -367,3 +385,83 @@ const optimizedScrollHandler = debounce(() => {
 }, 16); // ~60fps
 
 window.addEventListener('scroll', optimizedScrollHandler);
+
+// CV Section Enhancements
+document.addEventListener('DOMContentLoaded', () => {
+    // Add loading indicator for CV iframe
+    const cvViewer = document.querySelector('.cv-viewer');
+    if (cvViewer) {
+        const iframe = cvViewer.querySelector('.cv-iframe');
+        if (iframe) {
+            // Create loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'cv-loading';
+            loadingDiv.innerHTML = `
+                <div style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    text-align: center;
+                    color: #64748b;
+                ">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <p>Loading CV...</p>
+                </div>
+            `;
+            loadingDiv.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.9);
+                z-index: 10;
+            `;
+            
+            cvViewer.style.position = 'relative';
+            cvViewer.appendChild(loadingDiv);
+            
+            // Remove loading indicator when iframe loads
+            iframe.addEventListener('load', () => {
+                setTimeout(() => {
+                    if (loadingDiv.parentNode) {
+                        loadingDiv.remove();
+                    }
+                }, 500);
+            });
+            
+            // Handle iframe load errors
+            iframe.addEventListener('error', () => {
+                if (loadingDiv.parentNode) {
+                    loadingDiv.innerHTML = `
+                        <div style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            text-align: center;
+                            color: #ef4444;
+                        ">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>Unable to load CV preview</p>
+                            <a href="assets/Faisal-Alghamdi-CV.pdf" download style="color: #2563eb; text-decoration: underline;">
+                                Download PDF instead
+                            </a>
+                        </div>
+                    `;
+                }
+            });
+        }
+    }
+    
+    // Analytics for CV downloads (optional)
+    const downloadButton = document.querySelector('a[download]');
+    if (downloadButton) {
+        downloadButton.addEventListener('click', () => {
+            console.log('CV download initiated');
+            // You can add analytics tracking here
+            // gtag('event', 'download', { 'event_category': 'CV' });
+        });
+    }
+});
